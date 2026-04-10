@@ -1,54 +1,4 @@
-﻿//using System.Text.Json;
-//using System.Text.RegularExpressions;
-//using Rules_Engine_API.Models;
-
-//namespace Rules_Engine_API.Services
-//{
-//    public class RulesEngine : IRulesEngine
-//    {
-//        private readonly List<AttackRule> _rules;
-
-//        public RulesEngine()
-//        {
-//            var rulesPath = Path.Combine(AppContext.BaseDirectory, "Rules", "conf-6.json");
-//            var json = File.ReadAllText(rulesPath);
-//            _rules = JsonSerializer.Deserialize<List<AttackRule>>(
-//            json,
-//            new JsonSerializerOptions
-//            {
-//                PropertyNameCaseInsensitive = true
-//            }
-//          );
-
-//        }
-
-
-//        public List<DetectionResult> Analyze(string payload)
-//        {
-//            var results = new List<DetectionResult>();
-
-//            foreach (var rule in _rules)
-//            {
-//                foreach (var pattern in rule.Patterns)
-//                {
-//                    if (Regex.IsMatch(payload, pattern.Regex))
-//                    {
-//                        results.Add(new DetectionResult
-//                        {
-//                            AttackId = rule.Id,
-//                            AttackName = rule.Name,
-//                            Pattern = pattern.Regex,
-//                            Score = pattern.Score
-//                        });
-//                    }
-//                }
-//            }
-
-//            return results;
-//        }
-//    }
-//}
-
+ 
 
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -72,9 +22,7 @@ namespace Rules_Engine_API.Services
             LoadSafeRules(json);
         }
 
-        /// <summary>
-        /// Load rules and silently skip invalid .NET regex patterns
-        /// </summary>
+        
         private void LoadSafeRules(string json)
         {
             var rawRules = JsonSerializer.Deserialize<List<AttackRule>>(
@@ -101,14 +49,12 @@ namespace Rules_Engine_API.Services
 
                     try
                     {
-                        // Validate regex for .NET compatibility
-                        _ = new Regex(pattern.Regex, RegexOptions.Compiled);
+                         _ = new Regex(pattern.Regex, RegexOptions.Compiled);
                         safePatterns.Add(pattern);
                     }
                     catch (RegexParseException)
                     {
-                        // Skip invalid regex silently (PCRE / unsupported syntax)
-                        continue;
+                         continue;
                     }
                 }
 
@@ -146,8 +92,7 @@ namespace Rules_Engine_API.Services
                     }
                     catch
                     {
-                        // Extra safety: never crash request
-                        continue;
+                         continue;
                     }
                 }
             }
