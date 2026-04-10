@@ -19,32 +19,7 @@ public class EvaluationController : ControllerBase
     {
         _repo = repo;
     }
-
-    // ─────────────────────────────────────────────────────────────
-    // POST api/evaluation/submit
-    // ─────────────────────────────────────────────────────────────
-    //[HttpPost("submit")]
-    //public async Task<IActionResult> Submit([FromBody] SubmitEvaluationRequest request)
-    //{
-    //    if (request.SessionId <= 0)
-    //        return BadRequest("Valid SessionId is required.");
-
-    //    if (request.AttackEvaluations == null || request.AttackEvaluations.Count == 0)
-    //        return BadRequest("At least one attack evaluation is required.");
-
-    //    var session = await _repo.SubmitEvaluationAsync(request);
-
-    //    if (session == null)
-    //        return NotFound($"Session {request.SessionId} not found.");
-
-    //    return Ok(new
-    //    {
-    //        message = "Evaluation submitted successfully.",
-    //        sessionId = session.Id,
-    //        evaluatedAt = session.EvaluatedAt,
-    //        attacksEvaluated = request.AttackEvaluations.Count
-    //    });
-    //}
+ 
 
     [HttpPost("submit")]
     public async Task<IActionResult> Submit([FromBody] SubmitEvaluationRequest request)
@@ -72,8 +47,7 @@ public class EvaluationController : ControllerBase
         }
         catch (DbUpdateException dbEx)
         {
-            // هيرجعلك الرسالة الداخلية من EF Core
-            return StatusCode(500, new
+             return StatusCode(500, new
             {
                 error = "Database update failed",
                 message = dbEx.InnerException?.Message ?? dbEx.Message
@@ -89,10 +63,7 @@ public class EvaluationController : ControllerBase
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // GET api/evaluation/sessions
-    // ─────────────────────────────────────────────────────────────
-    [HttpGet("sessions")]
+         [HttpGet("sessions")]
     public async Task<IActionResult> GetSessions(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
@@ -105,8 +76,7 @@ public class EvaluationController : ControllerBase
 
         var mapped = items.Select(s => MapSession(s)).ToList();
 
-        // filter by status if provided
-        if (!string.IsNullOrWhiteSpace(status))
+         if (!string.IsNullOrWhiteSpace(status))
             mapped = mapped.Where(s => s.Status == status.ToLower()).ToList();
 
         return Ok(new
@@ -119,10 +89,7 @@ public class EvaluationController : ControllerBase
         });
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // GET api/evaluation/sessions/{id}
-    // ─────────────────────────────────────────────────────────────
-    [HttpGet("sessions/{id:int}")]
+        [HttpGet("sessions/{id:int}")]
     public async Task<IActionResult> GetSession(int id)
     {
         var session = await _repo.GetSessionByIdAsync(id);
@@ -133,20 +100,14 @@ public class EvaluationController : ControllerBase
         return Ok(MapSession(session));
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // GET api/evaluation/stats
-    // ─────────────────────────────────────────────────────────────
-    [HttpGet("stats")]
+       [HttpGet("stats")]
     public async Task<IActionResult> GetStats()
     {
         var stats = await _repo.GetStatsAsync();
         return Ok(stats);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // GET api/evaluation/failed
-    // ─────────────────────────────────────────────────────────────
-    [HttpGet("failed")]
+        [HttpGet("failed")]
     public async Task<IActionResult> GetFailed([FromQuery] string type = "all")
     {
         if (!new[] { "detection", "classification", "all" }.Contains(type.ToLower()))
@@ -162,33 +123,24 @@ public class EvaluationController : ControllerBase
         });
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // GET api/evaluation/attack-summary
-    // Attack-level statistics with error rates and failed payloads
-    // ─────────────────────────────────────────────────────────────
-    [HttpGet("attack-summary")]
+        [HttpGet("attack-summary")]
     public async Task<IActionResult> GetAttackSummary()
     {
         var attacks = await _repo.GetAttackSummaryAsync();
 
-        // ✅ Removed totalAttackTypes - frontend can use attacks.length
-        return Ok(new
+         return Ok(new
         {
             attacks
         });
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Helper: map session to response shape
-    // ─────────────────────────────────────────────────────────────
-    private static dynamic MapSession(EvaluationSession s)
+         private static dynamic MapSession(EvaluationSession s)
     {
         var matchDetails = ParseMatchDetails(s.MatchedAttacksJson);
         var totalAttacks = matchDetails.Count;
         var evaluatedCount = s.AttackEvaluations.Count;
 
-        // Merge each match (attackName + pattern) with its evaluation
-        var attacks = matchDetails.Select(match =>
+         var attacks = matchDetails.Select(match =>
         {
             var eval = s.AttackEvaluations
                 .FirstOrDefault(e => e.AttackName == match.AttackName
@@ -224,20 +176,14 @@ public class EvaluationController : ControllerBase
         };
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Helper: calculate session status
-    // ─────────────────────────────────────────────────────────────
-    private static string GetStatus(int totalAttacks, int evaluatedCount)
+       private static string GetStatus(int totalAttacks, int evaluatedCount)
     {
         if (evaluatedCount == 0) return "pending";
         if (evaluatedCount < totalAttacks) return "partial";
         return "complete";
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Helper: Parse match details (attackName + pattern + score)
-    // ─────────────────────────────────────────────────────────────
-    private static List<MatchDetail> ParseMatchDetails(string? json)
+        private static List<MatchDetail> ParseMatchDetails(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))
             return new();
@@ -253,10 +199,7 @@ public class EvaluationController : ControllerBase
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Helper class for deserializing match details
-// ─────────────────────────────────────────────────────────────
-public class MatchDetail
+ public class MatchDetail
 {
     public string AttackName { get; set; }
     public string Pattern { get; set; }
