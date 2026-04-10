@@ -26,8 +26,7 @@ namespace Decopia.API.Services
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return null;
 
-            // توليد JWT
-            var tokenHandler = new JwtSecurityTokenHandler();
+             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -63,8 +62,7 @@ namespace Decopia.API.Services
 
             await _context.SaveChangesAsync();
 
-            // للطباعة في Console لتجربة
-            Console.WriteLine($"Reset code for {user.Email}: {user.ResetCode}");
+             Console.WriteLine($"Reset code for {user.Email}: {user.ResetCode}");
 
             return true;
         }
