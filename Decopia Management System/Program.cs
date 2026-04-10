@@ -6,21 +6,11 @@ using Decopia.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
-//Log.Logger = new LoggerConfiguration()
-//    .MinimumLevel.Information()
-//    .WriteTo.Console()
-//    .WriteTo.File(
-//        "logs/log-.txt",
-//        rollingInterval: RollingInterval.Day,
-//        retainedFileCountLimit: 7)
-//    .CreateLogger();
-
+ 
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Host.UseSerilog();
-
+ 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -50,22 +40,20 @@ builder.Services.AddControllers();
 
 }
 
-//Add services to the container.
-
+ 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,              // عدد المحاولات
-            maxRetryDelay: TimeSpan.FromSeconds(10), // أقصى مدة بين محاولتين
-            errorNumbersToAdd: null         // ممكن تسيبيها null
+            maxRetryCount: 5,              
+            maxRetryDelay: TimeSpan.FromSeconds(10), 
+            errorNumbersToAdd: null         
             )
         )
 
     );
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<JwtTokenGenerator>();
@@ -93,7 +81,6 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -102,7 +89,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseCors("AllowFrontend"); // 👈 لازم قبل authentication
+app.UseCors("AllowFrontend"); 
 
 app.UseAuthentication();
 app.UseAuthorization();
