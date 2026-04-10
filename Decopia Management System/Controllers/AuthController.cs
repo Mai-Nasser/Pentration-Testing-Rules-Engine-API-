@@ -15,8 +15,7 @@ namespace Decopia.API.Controllers
             _authService = authService;
         }
 
-        // Login
-        [HttpPost("login")]
+         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto dto)
         {
             var result = await _authService.LoginAsync(dto);
@@ -26,8 +25,7 @@ namespace Decopia.API.Controllers
             return Ok(result);
         }
 
-        // Forgot password
-        [HttpPost("forgot-password")]
+         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto dto)
         {
             var success = await _authService.ForgotPasswordAsync(dto);
@@ -37,8 +35,7 @@ namespace Decopia.API.Controllers
             return Ok("Reset code sent.");
         }
 
-        // Reset password
-        [HttpPost("reset-password")]
+         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequestDto dto)
         {
             var success = await _authService.ResetPasswordAsync(dto);
