@@ -2,18 +2,14 @@
 
 public class SecurityEvent
 {
-    // General
-    public string EventType { get; set; } = "web_attack";
+     public string EventType { get; set; } = "web_attack";
     public DateTime Timestamp { get; set; }
 
-    // Attack context
-    public string AttackType { get; set; }
+     public string AttackType { get; set; }
     public List<string> MatchedAttacks { get; set; }
 
-    // Request context
-    public string SourceIp { get; set; }
+     public string SourceIp { get; set; }
     public string Payload { get; set; }
 
-    // Honeypot context
-    public string Decoy { get; set; }
+     public string Decoy { get; set; }
 }
